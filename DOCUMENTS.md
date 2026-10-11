@@ -5,9 +5,10 @@
 > that keep the owner's data safe. Read sections 3, 6, 7 and 9 before changing anything. After every change,
 > update the status line, the affected sections and the changelog (section 12), and bump the version (section 8).
 
-- **Status:** version **1.0.0** written and tested in a desktop browser (UI, stats, add/edit, delete, backup/restore,
-  desktop-backup import). **Native parts (SQLite, notifications, file sharing) not yet tested on a real phone.**
-  Not yet uploaded to GitHub at the time of writing.
+- **Status:** version **1.0.0** released on 2026-10-11 — signed APK on
+  https://github.com/shawondiu/dinlipi/releases/tag/v1.0.0 (GitHub Actions build succeeded). Tested in a desktop browser
+  (UI, stats, add/edit, delete, backup/restore, desktop-backup import). **Native parts (SQLite, notifications, file
+  sharing) not yet confirmed on the owner's phone** — next step is the owner's first install and feedback.
 - **Repository:** https://github.com/shawondiu/dinlipi (public, MIT License)
 - **App id:** `com.dinlipi.tracker` — **never change it** (a different id is a different app; data would not carry over).
 - **Owner:** GitHub user `shawondiu`; single user, personal use, **Android phone only**.
