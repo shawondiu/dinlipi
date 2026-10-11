@@ -1,0 +1,30 @@
+{
+  "name": "dinlipi",
+  "version": "1.0.0",
+  "description": "Dinlipi — a simple daily habit tracker for Android (Capacitor + SQLite).",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "node scripts/build-web.mjs",
+    "android:add": "cap add android",
+    "android:assets": "capacitor-assets generate --android --iconBackgroundColor #0b7a69 --iconBackgroundColorDark #0b7a69 --splashBackgroundColor #0b7a69 --splashBackgroundColorDark #0b7a69",
+    "android:patch": "node scripts/patch-android.mjs",
+    "android:sync": "cap sync android"
+  },
+  "dependencies": {
+    "@capacitor-community/sqlite": "^7.0.0",
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/app": "^7.0.0",
+    "@capacitor/core": "^7.0.0",
+    "@capacitor/filesystem": "^7.0.0",
+    "@capacitor/haptics": "^7.0.0",
+    "@capacitor/local-notifications": "^7.0.0",
+    "@capacitor/share": "^7.0.0",
+    "chart.js": "4.4.1"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^7.0.0",
+    "esbuild": "^0.24.0"
+  }
+}

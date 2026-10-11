@@ -1,0 +1,16 @@
+node_modules/
+android/
+dist/
+www/js/native.bundle.js
+www/vendor/
+*.apk
+*.aab
+
+# Signing keys and backups must never be committed
+*.p12
+*.jks
+*.keystore
+*.pem
+keys/
+dinlipi-backup-*.json
+dinlipi-before-restore-*.json

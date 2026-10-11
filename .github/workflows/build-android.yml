@@ -1,0 +1,83 @@
+# Builds the Dinlipi Android app (APK) on GitHub's servers.
+# - Push a tag like v1.0.1  → builds, signs and publishes the APK on the Releases page.
+# - Run manually (Actions tab → "Build Android APK" → Run workflow) → APK appears under the run's Artifacts.
+# Signing uses two repository secrets: KEYSTORE_BASE64 and KEYSTORE_PASSWORD.
+# Without them (for example in a fork) a debug-signed APK is built instead.
+name: Build Android APK
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Work out version
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then V="${GITHUB_REF_NAME#v}"; else V="$(node -p "require('./package.json').version")"; fi
+          echo "APP_VERSION=$V" >> "$GITHUB_ENV"
+          echo "Building version $V"
+
+      - name: Install packages
+        run: npm install --no-audit --no-fund
+
+      - name: Build web app
+        run: npm run build
+
+      - name: Create Android project
+        run: |
+          npx cap add android
+          npm run android:assets
+          npm run android:patch
+          npx cap sync android
+
+      - name: Build APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          if [ -n "$KEYSTORE_BASE64" ]; then ./gradlew assembleRelease --no-daemon; else ./gradlew assembleDebug --no-daemon; fi
+
+      - name: Sign APK
+        run: |
+          mkdir -p dist
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+            "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
+            echo "$KEYSTORE_BASE64" | base64 -d > release.p12
+            "$BT/apksigner" sign --ks release.p12 --ks-type PKCS12 --ks-pass env:KEYSTORE_PASSWORD --out "dist/Dinlipi-$APP_VERSION.apk" aligned.apk
+            "$BT/apksigner" verify --print-certs "dist/Dinlipi-$APP_VERSION.apk"
+            rm -f release.p12
+          else
+            cp android/app/build/outputs/apk/debug/app-debug.apk "dist/Dinlipi-$APP_VERSION-debug.apk"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Dinlipi-${{ env.APP_VERSION }}
+          path: dist/*.apk
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.apk
+          generate_release_notes: true
