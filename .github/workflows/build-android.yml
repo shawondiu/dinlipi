@@ -62,7 +62,7 @@ jobs:
           if [ -n "$KEYSTORE_BASE64" ]; then
             BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
             "$BT/zipalign" -p -f 4 android/app/build/outputs/apk/release/app-release-unsigned.apk aligned.apk
-            echo "$KEYSTORE_BASE64" | base64 -d > release.p12
+            printf '%s' "$KEYSTORE_BASE64" | tr -cd 'A-Za-z0-9+/=' | base64 -d > release.p12
             "$BT/apksigner" sign --ks release.p12 --ks-type PKCS12 --ks-pass env:KEYSTORE_PASSWORD --out "dist/Dinlipi-$APP_VERSION.apk" aligned.apk
             "$BT/apksigner" verify --print-certs "dist/Dinlipi-$APP_VERSION.apk"
             rm -f release.p12
