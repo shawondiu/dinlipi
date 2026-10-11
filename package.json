@@ -7,7 +7,7 @@
   "scripts": {
     "build": "node scripts/build-web.mjs",
     "android:add": "cap add android",
-    "android:assets": "capacitor-assets generate --android --iconBackgroundColor #0b7a69 --iconBackgroundColorDark #0b7a69 --splashBackgroundColor #0b7a69 --splashBackgroundColorDark #0b7a69",
+    "android:assets": "capacitor-assets generate --android --iconBackgroundColor '#0b7a69' --iconBackgroundColorDark '#0b7a69' --splashBackgroundColor '#0b7a69' --splashBackgroundColorDark '#0b7a69'",
     "android:patch": "node scripts/patch-android.mjs",
     "android:sync": "cap sync android"
   },
